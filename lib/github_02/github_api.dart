@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -22,7 +23,7 @@ class GithubApi {
     try{
       Response<String> rep = await dio.get<String>(url);
       rep = await dio.get<String>(url);
-
+      print(rep);
       if (rep.statusCode == 200 && rep.data != null) {
         dynamic result = json.decode(rep.data!);
         resultReps = result.map<GithubRepository>(GithubRepository.fromJson).toList();
@@ -30,6 +31,7 @@ class GithubApi {
         throw ErrorType.serverError;
       }
     }catch(e){
+      print(e);
 
       if(e is DioError){
         if(e.type==DioErrorType.other){
@@ -43,4 +45,18 @@ class GithubApi {
     }
     return resultReps;
   }
+
+  StreamController<List<GithubRepository>> _reposCtrl = StreamController();
+
+
+}
+
+class RepositoryState{
+
+}
+
+class RepositoryLoadedState{
+  final List<GithubRepository> data;
+
+  RepositoryLoadedState({required this.data});
 }

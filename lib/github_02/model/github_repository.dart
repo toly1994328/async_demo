@@ -25,7 +25,7 @@ class GithubRepository {
 
   factory GithubRepository.fromJson(dynamic map) {
     return GithubRepository(
-      username: map['owner']['login'] ?? '',
+      username: map['owner2']['login'] ?? '',
       userAvatarUrl: map['owner']['avatar_url'] ?? '',
       description: map['description'] ?? '',
       url: map['html_url'] ?? '',
