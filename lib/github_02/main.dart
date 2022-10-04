@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'github_api.dart';
+import 'api/github_api.dart';
+import 'api/state.dart';
 import 'model/github_repository.dart';
 import 'views/github_repository_error_panel.dart';
 import 'views/github_repository_loading_panel.dart';
@@ -47,8 +48,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    task = api.getRepositoryByUser(username: 'toly1994328');
-    _ctrl.addStream(task.asStream());
+    api.getRepositoryByUser(username: 'toly1994328');
   }
 
   @override
@@ -57,40 +57,34 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('toly1994328 的 github 仓库'),
       ),
-      body: StreamBuilder<List<GithubRepository>>(
-        stream: _ctrl.stream,
+      body: StreamBuilder<RepositoryState>(
+        stream: api.repositoryStream,
         builder: buildByState,
       ),
     );
   }
 
-  void refresh(){
-    Future<List<GithubRepository>> task = api.getRepositoryByUser(username: 'toly1994328');
-    _ctrl.addStream(task.asStream());
+  void refresh() {
+    api.getRepositoryByUser(username: 'toly1994328');
   }
 
-  Widget buildByState(BuildContext context, AsyncSnapshot<List<GithubRepository>> snapshot) {
-    print('======${snapshot.connectionState}===${snapshot.hasData}===${snapshot.hasError}=');
+  Widget buildByState(BuildContext context, AsyncSnapshot<RepositoryState> snapshot) {
+    if (snapshot.hasData && snapshot.data != null) {
+      RepositoryState state = snapshot.data!;
+      if (state is RepositoryLoadingState) {
+        return const GithubRepositoryLoadingPanel();
+      }
+      if (state is RepositoryLoadedState) {
+        return GithubRepositoryPanel(githubRepositories: state.data);
+      }
 
-    if(!snapshot.hasData&&!snapshot.hasData){
-      return const GithubRepositoryLoadingPanel();
-    }
-
-    if (snapshot.hasError) {
-      return GithubRepositoryErrorPanel(
+      if (state is RepositoryErrorState) {
+        return GithubRepositoryErrorPanel(
+          errorType: state.type,
           onRefresh: refresh,
-          errorType:snapshot.error as ErrorType
-      );
-    }
-
-
-
-    if (snapshot.hasData) {
-      if (snapshot.data != null) {
-        return GithubRepositoryPanel(githubRepositories: snapshot.data!);
+        );
       }
     }
-
     return const SizedBox.shrink();
   }
 }
