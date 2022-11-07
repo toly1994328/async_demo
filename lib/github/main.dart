@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -49,6 +51,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.refresh),
+        onPressed: (){},
+      ),
       appBar: AppBar(
         title: Text('toly1994328 的 github 仓库'),
       ),
@@ -82,11 +88,15 @@ class _HomePageState extends State<HomePage> {
         }
         if (snapshot.hasData) {
           if (snapshot.data != null) {
-            return GithubRepositoryPanel(githubRepositories: snapshot.data!);
+            return  GithubRepositoryPanel(githubRepositories: snapshot.data!);
           }
         }
         break;
     }
     return const SizedBox.shrink();
   }
+
+
+
+
 }
