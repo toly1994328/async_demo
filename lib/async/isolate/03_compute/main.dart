@@ -67,6 +67,7 @@ class _HomePageState extends State<HomePage> {
 
 //{"count": 100000000}
   void _doTask() async {
+    // AssetBundle
     int startTime = DateTime.now().millisecondsSinceEpoch;
     Future<TaskResult> task1Result = compute<int, TaskResult>(
         _doTaskInCompute, 50000000,
