@@ -7,7 +7,9 @@ Map<int,String> numMap = {
 
 void main(){
   Stream<int> intStream = StreamProvider().createStream();
-  Stream<String> newStream = intStream.map<String>((int e) => numMap[e]!);
+  Stream<String> newStream = intStream.map<String>((int e) {
+    return numMap[e]!;
+  });
   newStream.listen((e) {
     print(e);
   });
